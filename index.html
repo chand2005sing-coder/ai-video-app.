@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Script to Video App</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f9; padding: 20px; text-align: center; margin: 0; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); margin-top: 20px; }
+        textarea { width: 100%; height: 100px; padding: 10px; margin-top: 10px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        .btn-free { background: #ff4757; color: white; border: none; padding: 12px 20px; margin-top: 15px; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; }
+        .btn-free:hover { background: #ff6b81; }
+        .btn-pro { background: #2ed573; color: white; border: none; padding: 12px 20px; margin-top: 10px; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; text-decoration: none; display: inline-block; box-sizing: border-box; }
+        .btn-pro:hover { background: #26af5f; }
+        .video-box { margin-top: 20px; display: none; background: #000; border-radius: 8px; overflow: hidden; padding: 10px; color: white; }
+        video { width: 100%; border-radius: 5px; }
+        .note { font-size: 12px; color: #666; margin-top: 15px; }
+        hr { border: 0; height: 1px; background: #eee; margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🎬 AI Video Generator</h2>
+        <p>Apna idea ya script yahan likhein <br><b>(Free: Max 20 Seconds)</b></p>
+        
+        <textarea id="scriptInput" placeholder="Jaise: Motivation par ek choti si video..."></textarea>
+        
+        <button class="btn-free" onclick="generateFreeVideo()">20 Sec Video Banayein (Free)</button>
+        
+        <!-- Video Output Section -->
+        <div class="video-box" id="videoOutput">
+            <p style="font-size: 14px; margin-bottom: 5px; color: #fff;">Aapki AI Video Taiyar Hai:</p>
+            <video controls id="sampleVideo">
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                Aapka browser video support nahi karta.
+            </video>
+        </div>
+        
+        <hr>
+
+        <h3>⭐ Pro Membership</h3>
+        <p style="font-size: 14px; color: #444;">Bina kisi ad ke, 1-2 minute ki lambi video banayein.</p>
+        
+        <button class="btn-pro" onclick="openProPlan()">Pro Plan Lein (₹200/mahina)</button>
+        
+        <div class="note">Unlimited access & Zero Ads</div>
+    </div>
+
+    <script>
+        function generateFreeVideo() {
+            let text = document.getElementById("scriptInput").value;
+            if(text.trim() === "") {
+                alert("Pehle kuch script ya topic toh likhein!");
+            } else {
+                // Direct video box dikhayein bina kisi rukawat ke
+                document.getElementById("videoOutput").style.display = "block";
+            }
+        }
+
+        function openProPlan() {
+            alert("Aapko ₹200 payment gateway par redirect kiya jayega!");
+        }
+    </script>
+
+</body>
+</html>
