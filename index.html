@@ -1,67 +1,116 @@
-<!DOCTYPE html>
+
+     <!DOCTYPE html>
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Script to Video App</title>
+    <title>AI Video Generator</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f9; padding: 20px; text-align: center; margin: 0; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); margin-top: 20px; }
-        textarea { width: 100%; height: 100px; padding: 10px; margin-top: 10px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        .btn-free { background: #ff4757; color: white; border: none; padding: 12px 20px; margin-top: 15px; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; }
-        .btn-free:hover { background: #ff6b81; }
-        .btn-pro { background: #2ed573; color: white; border: none; padding: 12px 20px; margin-top: 10px; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; text-decoration: none; display: inline-block; box-sizing: border-box; }
-        .btn-pro:hover { background: #26af5f; }
-        .video-box { margin-top: 20px; display: none; background: #000; border-radius: 8px; overflow: hidden; padding: 10px; color: white; }
-        video { width: 100%; border-radius: 5px; }
-        .note { font-size: 12px; color: #666; margin-top: 15px; }
-        hr { border: 0; height: 1px; background: #eee; margin: 20px 0; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        textarea { width: 100%; height: 100px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px; font-size: 14px; resize: none; box-sizing: border-box; }
+        .btn-primary { background-color: #ff4757; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
+        .pro-box { background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px dashed #2ed573; margin-top: 15px; }
+        .btn-pro { background-color: #2ed573; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        .video-container { margin-top: 20px; display: none; }
+        video { width: 100%; border-radius: 8px; }
+        .loading { display: none; font-size: 14px; color: #555; margin-top: 10px; }
+        
+        /* Modal Popup Style */
+        .modal { display: none; position: fixed; z-index: 10; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background-color: #fff; padding: 20px; border-radius: 12px; width: 85%; max-width: 320px; text-align: center; position: relative; }
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; position: absolute; right: 15px; top: 5px; }
+        .close-btn:hover { color: #000; }
+        .qr-img { width: 200px; height: 200px; margin: 15px 0; border-radius: 8px; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h2>🎬 AI Video Generator</h2>
-        <p>Apna idea ya script yahan likhein <br><b>(Free: Max 20 Seconds)</b></p>
+        <p>Apna idea ya script yahan likhein<br>(Free: Max 20 Seconds)</p>
         
         <textarea id="scriptInput" placeholder="Jaise: Motivation par ek choti si video..."></textarea>
         
-        <button class="btn-free" onclick="generateFreeVideo()">20 Sec Video Banayein (Free)</button>
+        <button class="btn-primary" onclick="generateVideo()">20 Sec Video Banayein (Free)</button>
         
-        <!-- Video Output Section -->
-        <div class="video-box" id="videoOutput">
-            <p style="font-size: 14px; margin-bottom: 5px; color: #fff;">Aapki AI Video Taiyar Hai:</p>
-            <video controls id="sampleVideo">
-                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-                Aapka browser video support nahi karta.
+        <div class="loading" id="loadingText">Aapki video ban rahi hai, kripya intezaar karein...</div>
+
+        <div class="video-container" id="videoContainer">
+            <h3>Aapki AI Video Taiyar Hai:</h3>
+            <video id="outputVideo" controls>
+                Your browser does not support the video tag.
             </video>
         </div>
-        
-        <hr>
 
-        <h3>⭐ Pro Membership</h3>
-        <p style="font-size: 14px; color: #444;">Bina kisi ad ke, 1-2 minute ki lambi video banayein.</p>
-        
-        <button class="btn-pro" onclick="openProPlan()">Pro Plan Lein (₹200/mahina)</button>
-        
-        <div class="note">Unlimited access & Zero Ads</div>
+        <div class="pro-box">
+            <h3>⭐ Pro Membership</h3>
+            <p style="font-size: 13px; color: #666;">Bina kisi ad ke, 1-2 minute ki lambi video banayein.</p>
+            <button class="btn-pro" onclick="openPaymentModal()">Pro Plan Lein (₹200/mahina)</button>
+        </div>
+    </div>
+
+    <!-- Payment QR Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closePaymentModal()">&times;</span>
+            <h3>Scan & Pay ₹200</h3>
+            <p style="font-size: 13px; color: #555;">Kisi bhi UPI App se scan karein:</p>
+            <!-- Google API se automatically QR code generate hoga aapki UPI ID ka -->
+            <img id="qrCodeImg" class="qr-img" src="" alt="UPI QR Code">
+            <p style="font-size: 12px; font-weight: bold; color: #333;">UPI ID: 9318470995@fam</p>
+            <p style="font-size: 11px; color: #888;">Payment karne ke baad screenshot bhejें।</p>
+        </div>
     </div>
 
     <script>
-        function generateFreeVideo() {
-            let text = document.getElementById("scriptInput").value;
-            if(text.trim() === "") {
-                alert("Pehle kuch script ya topic toh likhein!");
-            } else {
-                // Direct video box dikhayein bina kisi rukawat ke
-                document.getElementById("videoOutput").style.display = "block";
+        function generateVideo() {
+            const scriptText = document.getElementById('scriptInput').value.trim();
+            const loadingText = document.getElementById('loadingText');
+            const videoContainer = document.getElementById('videoContainer');
+            const outputVideo = document.getElementById('outputVideo');
+
+            if (!scriptText) {
+                alert('Kripya pehle kuch script ya idea likhein!');
+                return;
             }
+
+            loadingText.style.display = 'block';
+            videoContainer.style.display = 'none';
+
+            setTimeout(() => {
+                loadingText.style.display = 'none';
+                videoContainer.style.display = 'block';
+                outputVideo.src = "https://www.w3schools.com/html/mov_bbb.mp4";
+                outputVideo.load();
+            }, 3000);
         }
 
-        function openProPlan() {
-            alert("Aapko ₹200 payment gateway par redirect kiya jayega!");
+        function openPaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            const qrImg = document.getElementById('qrCodeImg');
+            
+            const upiID = "9318470995@fam";
+            const amount = "200.00";
+            const payeeName = "AI Video Generator Pro";
+            
+            // UPI String for QR
+            const upiString = `upi://pay?pa=${upiID}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
+            
+            // Generate QR Code using Google Chart API
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
+            
+            modal.style.display = "flex";
+        }
+
+        function closePaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            modal.style.display = "none";
         }
     </script>
 
 </body>
 </html>
+   
+        
+        
